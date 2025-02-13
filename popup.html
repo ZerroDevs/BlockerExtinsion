@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Site Blocker</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+	<div class="container">
+		<header>
+			<h1>Site Blocker</h1>
+			<button id="themeToggle" class="theme-toggle">
+				<svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
+					<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+				</svg>
+				<svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
+					<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+					<path d="M12 2v2m0 16v2M4 12H2m20 0h-2m-2.5-7.5l-1.5 1.5M5.5 5.5 4 4m14.5 14.5 1.5 1.5M5.5 18.5 4 20" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+				</svg>
+			</button>
+		</header>
+
+		<div class="tabs">
+			<button class="tab-btn active" data-tab="block">Block</button>
+			<button class="tab-btn" data-tab="manage">Manage</button>
+			<button class="tab-btn" data-tab="presets">Presets</button>
+		</div>
+
+		<div class="tab-content" id="blockTab">
+			<div class="input-section">
+				<div class="input-group">
+					<input type="text" id="blockInput" placeholder="Enter URL or keyword">
+					<button id="addBlock" class="add-btn">
+						<svg viewBox="0 0 24 24" width="24" height="24">
+							<path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						</svg>
+					</button>
+				</div>
+			</div>
+
+			<div class="stats">
+				<div class="stat-item">
+					<span class="stat-label">Total Blocked</span>
+					<span id="totalBlocked" class="stat-value">0</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-content hidden" id="manageTab">
+			<div class="blocked-list">
+				<h2>Blocked Items</h2>
+				<div id="blockedItems" class="items-container">
+					<!-- Blocked items will be inserted here -->
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-content hidden" id="presetsTab">
+			<div class="presets-list">
+				<h2>Blocking Presets</h2>
+				<div class="preset-item">
+					<div class="preset-info">
+						<h3>Adult Content Blocker</h3>
+						<p>Blocks adult content, explicit material, and related websites</p>
+					</div>
+					<div class="preset-controls">
+						<button class="lock-btn" data-preset="adultContent">
+							<span class="lock-text">Lock</span>
+							<span class="lock-icon">🔒</span>
+						</button>
+						<label class="switch">
+							<input type="checkbox" id="adultContentPreset">
+							<span class="slider"></span>
+						</label>
+					</div>
+				</div>
+
+				<div class="preset-item">
+					<div class="preset-info">
+						<h3>Social Media Blocker</h3>
+						<p>Blocks popular social media platforms and time-wasting sites</p>
+					</div>
+					<div class="preset-controls">
+						<button class="lock-btn" data-preset="socialMedia">
+							<span class="lock-text">Lock</span>
+							<span class="lock-icon">🔒</span>
+						</button>
+						<label class="switch">
+							<input type="checkbox" id="socialMediaPreset">
+							<span class="slider"></span>
+						</label>
+					</div>
+				</div>
+
+				<div class="preset-item">
+					<div class="preset-info">
+						<h3>Gaming Sites Blocker</h3>
+						<p>Blocks gaming websites and online game platforms</p>
+					</div>
+					<div class="preset-controls">
+						<button class="lock-btn" data-preset="gaming">
+							<span class="lock-text">Lock</span>
+							<span class="lock-icon">🔒</span>
+						</button>
+						<label class="switch">
+							<input type="checkbox" id="gamingPreset">
+							<span class="slider"></span>
+						</label>
+					</div>
+				</div>
+
+				<div class="preset-item">
+					<div class="preset-info">
+						<h3>Gambling Blocker</h3>
+						<p>Blocks gambling, betting, and casino websites</p>
+					</div>
+					<div class="preset-controls">
+						<button class="lock-btn" data-preset="gambling">
+							<span class="lock-text">Lock</span>
+							<span class="lock-icon">🔒</span>
+						</button>
+						<label class="switch">
+							<input type="checkbox" id="gamblingPreset">
+							<span class="slider"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Password Modals -->
+	<div id="setPasswordModal" class="modal">
+		<div class="modal-content">
+			<h3>Set Password Protection</h3>
+			<div class="password-form">
+				<input type="password" id="newPassword" placeholder="Enter password">
+				<input type="password" id="confirmPassword" placeholder="Confirm password">
+				<div class="modal-buttons">
+					<button id="savePassword" class="primary-btn">Lock Preset</button>
+					<button id="cancelSetPassword" class="secondary-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="unlockModal" class="modal">
+		<div class="modal-content">
+			<h3>Unlock Preset</h3>
+			<div class="password-form">
+				<input type="password" id="unlockPassword" placeholder="Enter password">
+				<div class="modal-buttons">
+					<button id="submitUnlock" class="primary-btn">Unlock</button>
+					<button id="cancelUnlock" class="secondary-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,640 @@
+:root {
+	--bg-primary: #ffffff;
+	--bg-secondary: #f5f5f5;
+	--text-primary: #333333;
+	--text-secondary: #666666;
+	--accent-color: #4a90e2;
+	--border-color: #e0e0e0;
+	--danger-color: #e74c3c;
+	--success-color: #2ecc71;
+	--shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme {
+	--bg-primary: #1a1a1a;
+	--bg-secondary: #2d2d2d;
+	--text-primary: #ffffff;
+	--text-secondary: #b3b3b3;
+	--border-color: #404040;
+	--shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Segoe UI', system-ui, sans-serif;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	width: 350px;
+	min-height: 400px;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+	padding: 1rem;
+}
+
+header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+}
+
+h1 {
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+.theme-toggle {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+	color: var(--text-primary);
+}
+
+.theme-toggle svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.light-theme .moon-icon,
+.dark-theme .sun-icon {
+	display: block;
+}
+
+.light-theme .sun-icon,
+.dark-theme .moon-icon {
+	display: none;
+}
+
+.input-section {
+	margin-bottom: 1.5rem;
+}
+
+.input-group {
+	display: flex;
+	gap: 0.5rem;
+	position: relative;
+	margin-bottom: 2rem;
+}
+
+.success-message {
+	position: absolute;
+	bottom: -30px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	color: var(--success-color);
+	font-size: 0.9rem;
+	animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+	0% { opacity: 0; transform: translateY(10px); }
+	20% { opacity: 1; transform: translateY(0); }
+	80% { opacity: 1; transform: translateY(0); }
+	100% { opacity: 0; transform: translateY(-10px); }
+}
+
+input {
+	flex: 1;
+	padding: 0.75rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+	font-size: 0.9rem;
+}
+
+input:focus {
+	outline: none;
+	border-color: var(--accent-color);
+}
+
+.add-btn {
+	background-color: var(--accent-color);
+	border: none;
+	border-radius: 0.5rem;
+	padding: 0.5rem;
+	color: white;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+}
+
+.add-btn:hover {
+	background-color: #357abd;
+}
+
+.tabs {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+	border-bottom: 1px solid var(--border-color);
+	padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+	background: none;
+	border: none;
+	color: var(--text-secondary);
+	cursor: pointer;
+	font-size: 1rem;
+	padding: 0.5rem 1rem;
+	border-radius: 0.5rem;
+	transition: all 0.2s;
+	position: relative;
+	overflow: hidden;
+}
+
+.tab-btn::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 2px;
+	background-color: var(--accent-color);
+	transition: all 0.3s;
+	transform: translateX(-50%);
+}
+
+.tab-btn.active::after {
+	width: 80%;
+}
+
+.tab-btn.active {
+	color: var(--accent-color);
+	background-color: var(--bg-secondary);
+}
+
+.tab-content {
+	display: block;
+}
+
+.tab-content.hidden {
+	display: none;
+}
+
+.blocked-list {
+	background-color: var(--bg-secondary);
+	border-radius: 0.5rem;
+	padding: 1rem;
+	margin-top: 1rem;
+}
+
+h2 {
+	font-size: 1.1rem;
+	margin-bottom: 1rem;
+	color: var(--text-secondary);
+}
+
+.items-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.blocked-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.75rem;
+	background-color: var(--bg-primary);
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	margin-bottom: 0.5rem;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.blocked-item:hover {
+	transform: translateX(5px);
+	box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.blocked-item:last-child {
+	margin-bottom: 0;
+}
+
+.delete-btn {
+	color: var(--danger-color);
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0.25rem;
+	display: flex;
+	align-items: center;
+}
+
+.delete-btn:hover {
+	color: var(--danger-color);
+	transform: scale(1.1);
+}
+
+.delete-btn svg {
+	transition: transform 0.2s;
+}
+
+.delete-btn:hover svg {
+	transform: rotate(90deg);
+}
+
+.stats {
+	margin-top: 1rem;
+	padding: 1rem;
+	background-color: var(--bg-secondary);
+	border-radius: 0.5rem;
+}
+
+.stat-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.stat-label {
+	color: var(--text-secondary);
+}
+
+.stat-value {
+	font-weight: 600;
+	color: var(--accent-color);
+}
+
+/* Preset styles */
+.presets-list {
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.preset-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.preset-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.preset-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.preset-info p {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .slider:before {
+	transform: translateX(26px);
+}
+
+/* Modal styles */
+.modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+}
+
+.modal-content {
+	position: relative;
+	background-color: var(--bg-primary);
+	margin: 15% auto;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	width: 80%;
+	max-width: 400px;
+	box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.password-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.password-form input {
+	padding: 0.75rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+}
+
+.modal-buttons {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: flex-end;
+	margin-top: 1rem;
+}
+
+.primary-btn, .secondary-btn {
+	padding: 0.5rem 1rem;
+	border-radius: 0.5rem;
+	border: none;
+	cursor: pointer;
+	font-weight: 500;
+	transition: all 0.2s;
+}
+
+.primary-btn {
+	background-color: var(--accent-color);
+	color: white;
+}
+
+.secondary-btn {
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+}
+
+.primary-btn:hover {
+	background-color: #357abd;
+}
+
+.secondary-btn:hover {
+	background-color: var(--border-color);
+}
+
+/* Lock controls */
+.lock-controls {
+	margin-top: 0.5rem;
+}
+
+.lock-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0.25rem;
+	font-size: 1.2rem;
+	color: var(--text-secondary);
+	transition: transform 0.2s;
+}
+
+.lock-btn:hover {
+	transform: scale(1.1);
+}
+
+.lock-icon, .unlock-icon {
+	display: none;
+}
+
+.locked .lock-icon,
+.unlocked .unlock-icon {
+	display: inline;
+}
+
+/* Show modal */
+.modal.show {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Prevent interaction when locked */
+.preset-item.locked .switch {
+	pointer-events: none;
+	opacity: 0.7;
+}
+
+/* Locked item styles */
+.locked-item {
+    background-color: var(--bg-secondary) !important;
+    border: 2px solid var(--accent-color) !important;
+    position: relative;
+    opacity: 0.9;
+}
+
+.locked-item .delete-btn {
+    display: none;
+}
+
+.locked-item::after {
+    content: "🔒";
+    position: absolute;
+    right: 10px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.preset-item.locked {
+    border: 2px solid var(--accent-color);
+    background-color: var(--bg-secondary);
+}
+
+.preset-item.locked .preset-info::after {
+    content: "🔒 Password Protected";
+    display: block;
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* Modal improvements */
+.modal {
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    border: 2px solid var(--accent-color);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.password-form input {
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.password-form input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.modal-buttons button {
+    min-width: 80px;
+}
+
+.lock-btn {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+}
+
+.lock-btn:hover {
+    background-color: var(--bg-secondary);
+}
+
+/* Preset controls */
+.preset-controls {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.lock-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.lock-btn:hover {
+	background-color: var(--border-color);
+}
+
+.lock-text {
+	font-size: 0.9rem;
+}
+
+.lock-icon {
+	font-size: 1.1rem;
+	display: none;
+}
+
+.preset-item.locked .lock-text {
+	display: none;
+}
+
+.preset-item.locked .lock-icon {
+	display: block;
+}
+
+.preset-item.locked .lock-btn {
+	background-color: var(--accent-color);
+	border-color: var(--accent-color);
+	color: white;
+}
+
+.preset-item.locked .switch {
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+/* Password modal improvements */
+.modal-content {
+	max-width: 320px;
+	border: 2px solid var(--accent-color);
+}
+
+.password-form {
+	margin-top: 1.5rem;
+}
+
+.password-form input {
+	width: 100%;
+	padding: 0.75rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+	font-size: 1rem;
+	transition: all 0.2s;
+}
+
+.password-form input:focus {
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.modal-buttons {
+	margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+	min-width: 100px;
+}
+
+/* Lock status indicator */
+.preset-item.locked::after {
+	content: "🔒 Password Protected";
+	display: block;
+	position: absolute;
+	bottom: 0.5rem;
+	left: 1rem;
+	font-size: 0.8rem;
+	color: var(--accent-color);
+}

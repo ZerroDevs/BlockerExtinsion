@@ -1,0 +1,28 @@
+{
+	"manifest_version": 3,
+	"name": "Site Blocker",
+	"version": "1.0",
+	"description": "Modern site blocker with theme support",
+	"permissions": [
+		"storage",
+		"tabs",
+		"webNavigation",
+		"scripting",
+		"notifications"
+	],
+	"host_permissions": [
+		"<all_urls>"
+	],
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": "icon.svg"
+	},
+	"background": {
+		"service_worker": "background.js"
+	},
+	"icons": {
+		"128": "icon.svg"
+	}
+}
+
+
