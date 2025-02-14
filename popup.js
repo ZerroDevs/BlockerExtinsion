@@ -236,18 +236,38 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 
-		// Update statistics section
-		document.querySelector('.stats-header h2').textContent = languages[lang].statsHeader;
-		document.querySelector('.stat-card:first-child h3').textContent = languages[lang].totalBlocksTitle;
-		document.querySelector('.stat-card:nth-child(2) h3').textContent = languages[lang].mostBlockedCategory;
-		document.querySelector('#categoryPercent').textContent = languages[lang].percentOfTotal;
-		document.querySelector('.stats-section:first-of-type h3').textContent = languages[lang].mostBlockedSites;
-		document.querySelector('.stats-section:last-child h3').textContent = languages[lang].blockingPattern;
+		// Update display settings text
+		document.querySelector('.settings-section:nth-child(2) h2').textContent = languages[lang].displaySettings;
+		document.querySelector('label[for="highContrast"]').textContent = languages[lang].highContrastMode;
 
-		// Update time filter buttons
-		document.querySelector('[data-period="day"]').textContent = languages[lang].timeFilterDay;
-		document.querySelector('[data-period="week"]').textContent = languages[lang].timeFilterWeek;
-		document.querySelector('[data-period="month"]').textContent = languages[lang].timeFilterMonth;
+		// Stats section updates with null checks
+		const statsHeader = document.querySelector('.stats-header h2');
+		if (statsHeader) statsHeader.textContent = languages[lang].statsHeader;
+
+		const totalBlocksTitle = document.querySelector('.stat-card:first-child h3');
+		if (totalBlocksTitle) totalBlocksTitle.textContent = languages[lang].totalBlocksTitle;
+
+		const mostBlockedCategory = document.querySelector('.stat-card:nth-child(2) h3');
+		if (mostBlockedCategory) mostBlockedCategory.textContent = languages[lang].mostBlockedCategory;
+
+		const categoryPercent = document.getElementById('categoryPercent');
+		if (categoryPercent) categoryPercent.textContent = languages[lang].percentOfTotal;
+
+		const mostBlockedSites = document.querySelector('.stats-section:first-of-type h3');
+		if (mostBlockedSites) mostBlockedSites.textContent = languages[lang].mostBlockedSites;
+
+		const blockingPattern = document.querySelector('.stats-section:last-child h3');
+		if (blockingPattern) blockingPattern.textContent = languages[lang].blockingPattern;
+
+		// Time filter buttons with null checks
+		const dayButton = document.querySelector('[data-period="day"]');
+		if (dayButton) dayButton.textContent = languages[lang].timeFilterDay;
+
+		const weekButton = document.querySelector('[data-period="week"]');
+		if (weekButton) weekButton.textContent = languages[lang].timeFilterWeek;
+
+		const monthButton = document.querySelector('[data-period="month"]');
+		if (monthButton) monthButton.textContent = languages[lang].timeFilterMonth;
 
 		// Update trend text
 		document.querySelector('.stat-trend').textContent = languages[lang].trendFromLast;
@@ -276,39 +296,46 @@ document.addEventListener('DOMContentLoaded', () => {
 		updateLanguage(newLanguage);
 	});
 	
+	// Load high contrast setting
+	chrome.storage.sync.get(['highContrast'], (result) => {
+		const isHighContrast = result.highContrast || false;
+		document.getElementById('highContrast').checked = isHighContrast;
+		document.body.classList.toggle('high-contrast', isHighContrast);
+	});
+
+	// High contrast toggle handler
+	document.getElementById('highContrast').addEventListener('change', (e) => {
+		const isHighContrast = e.target.checked;
+		document.body.classList.toggle('high-contrast', isHighContrast);
+		chrome.storage.sync.set({ highContrast: isHighContrast });
+	});
+
 	// Save settings handler
 	document.getElementById('saveSettings').addEventListener('click', () => {
 		const saveButton = document.getElementById('saveSettings');
 		const language = document.getElementById('languageSelect').value;
+		const highContrast = document.getElementById('highContrast').checked;
 		
 		// Store original button text
-		const originalText = saveButton.textContent;
+		const originalText = languages[language].saveSettings;
 		
-		// Create success message element if it doesn't exist
-		let successMsg = document.querySelector('.settings-success-message');
-		if (!successMsg) {
-			successMsg = document.createElement('div');
-			successMsg.className = 'settings-success-message';
-			document.querySelector('.settings-actions').appendChild(successMsg);
-		}
-		
-		chrome.storage.sync.set({ language }, () => {
-			// Add success class to button and change text
+		chrome.storage.sync.set({ language, highContrast }, () => {
+			// Update button appearance and text
 			saveButton.classList.add('settings-btn-success');
 			saveButton.textContent = languages[language].settingsSaved;
-			
-			// Show success message
-			successMsg.textContent = languages[language].settingsSaved;
-			successMsg.classList.add('show');
 			
 			// Reset after 5 seconds
 			setTimeout(() => {
 				saveButton.classList.remove('settings-btn-success');
 				saveButton.textContent = originalText;
-				successMsg.classList.remove('show');
 			}, 5000);
+			
+			// Update UI language if changed
+			updateLanguage(language);
 		});
 	});
+
+
 
 	// Stats elements
 	const statsButton = document.getElementById('statsButton');

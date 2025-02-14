@@ -10,6 +10,46 @@
 	--shadow-color: rgba(0, 0, 0, 0.1);
 }
 
+/* High contrast mode styles */
+.high-contrast {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #ffff00;
+    --accent-color: #00ff00;
+    --border-color: #ffffff;
+    --success-color: #00ff00;
+    --danger-color: #ff0000;
+}
+
+.high-contrast .switch .slider {
+    background-color: #333333;
+    border: 2px solid var(--text-primary);
+}
+
+.high-contrast .switch input:checked + .slider {
+    background-color: var(--accent-color);
+}
+
+.high-contrast .tab-btn.active {
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+}
+
+.high-contrast .primary-btn {
+    border: 2px solid var(--text-primary);
+}
+
+.high-contrast .settings-btn-success {
+    border-color: var(--success-color);
+}
+
+.high-contrast .blocked-item,
+.high-contrast .preset-item,
+.high-contrast .settings-section {
+    border: 2px solid var(--border-color);
+}
+
 .dark-theme {
 	--bg-primary: #1a1a1a;
 	--bg-secondary: #2d2d2d;
@@ -598,8 +638,9 @@ input:checked + .slider:before {
 }
 
 .settings-btn-success {
-    background-color: var(--success-color) !important;
-    transition: background-color 0.3s ease;
+	background-color: var(--success-color) !important;
+	color: white !important;
+	transition: all 0.3s ease;
 }
 
 .settings-success-message {
@@ -743,6 +784,7 @@ input:checked + .slider:before {
 .primary-btn {
 	background-color: var(--accent-color);
 	color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .secondary-btn {

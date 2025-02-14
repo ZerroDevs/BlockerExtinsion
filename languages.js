@@ -25,6 +25,11 @@ const languages = {
 		saveSettings: "Save Settings",
 		settingsSaved: "Settings Saved!",
 
+		// Display Settings
+		displaySettings: "Display Settings",
+		highContrastMode: "High Contrast Mode:",
+		highContrastDesc: "Enhances visibility with stronger contrast",
+
 		// Other existing text...
 		addBlockPlaceholder: "Enter URL or keyword",
 		totalBlocked: "Total Blocked",
@@ -117,6 +122,11 @@ const languages = {
 		arabic: "العربية",
 		saveSettings: "حفظ الإعدادات",
 		settingsSaved: "تم الحفظ!",
+
+		// Display Settings
+		displaySettings: "إعدادات العرض",
+		highContrastMode: "وضع التباين العالي:",
+		highContrastDesc: "يحسن الرؤية بتباين أقوى",
 
 		// Other existing text...
 		addBlockPlaceholder: "أدخل رابط أو كلمة مفتاحية",
