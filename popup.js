@@ -121,6 +121,195 @@ function hideModal(modalId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	// Language handling
+	let currentLanguage = 'en';
+	
+	function updateLanguage(lang) {
+		currentLanguage = lang;
+		document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+		
+		// Update all text content
+		document.querySelector('h1').textContent = languages[lang].title;
+		document.querySelector('[data-tab="block"]').textContent = languages[lang].blockTab;
+		document.querySelector('[data-tab="manage"]').textContent = languages[lang].manageTab;
+		document.querySelector('[data-tab="presets"]').textContent = languages[lang].presetsTab;
+		document.querySelector('[data-tab="settings"]').textContent = languages[lang].settingsTab;
+		
+		// Update mode text and descriptions
+		document.querySelector('.mode-label').textContent = languages[lang].blockingMode;
+		document.getElementById('modeText').textContent = document.getElementById('blockingMode').checked ? 
+			languages[lang].heavyMode : languages[lang].lightMode;
+		
+		// Update mode descriptions
+		document.querySelector('.mode-description.light-mode h4').textContent = languages[lang].lightModeTitle;
+		document.querySelector('.mode-description.light-mode p').textContent = languages[lang].lightModeDesc;
+		document.querySelector('.mode-description.heavy-mode h4').textContent = languages[lang].heavyModeTitle;
+		document.querySelector('.mode-description.heavy-mode p').textContent = languages[lang].heavyModeDesc;
+
+		// Update mode features
+		const lightModeFeatures = document.querySelector('.mode-description.light-mode ul');
+		lightModeFeatures.innerHTML = `
+			<li>${languages[lang].checksWebsiteUrls}</li>
+			<li>${languages[lang].checksSearchQueries}</li>
+			<li>${languages[lang].noPageScanning}</li>
+		`;
+
+		const heavyModeFeatures = document.querySelector('.mode-description.heavy-mode ul');
+		heavyModeFeatures.innerHTML = `
+			<li>${languages[lang].includesLightMode}</li>
+			<li>${languages[lang].scansPageContent}</li>
+			<li>${languages[lang].checksEmbeddedLinks}</li>
+		`;
+		
+		// Update presets section
+		document.querySelector('.preset-header h2').textContent = languages[lang].blockingPresets;
+		document.getElementById('createPresetBtn').innerHTML = `
+			<svg viewBox="0 0 24 24" width="24" height="24">
+				<path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+			</svg>
+			${languages[lang].createPreset}
+		`;
+		document.querySelector('.preset-section-title').textContent = languages[lang].defaultPresets;
+
+		// Update preset titles and descriptions
+		const presetTitles = {
+			'adultContent': { title: languages[lang].adultContentTitle, desc: languages[lang].adultContentDesc },
+			'socialMedia': { title: languages[lang].socialMediaTitle, desc: languages[lang].socialMediaDesc },
+			'gaming': { title: languages[lang].gamingTitle, desc: languages[lang].gamingDesc },
+			'gambling': { title: languages[lang].gamblingTitle, desc: languages[lang].gamblingDesc }
+		};
+
+		Object.entries(presetTitles).forEach(([key, value]) => {
+			const presetItem = document.querySelector(`[data-preset="${key}"]`).closest('.preset-item');
+			presetItem.querySelector('h3').textContent = value.title;
+			presetItem.querySelector('p').textContent = value.desc;
+		});
+
+		// Update lock buttons
+		document.querySelectorAll('.lock-btn .lock-text').forEach(el => {
+			el.textContent = languages[lang].lock;
+		});
+
+		// Update custom preset modal
+		document.querySelector('#customPresetModal h3').textContent = languages[lang].createCustomPreset;
+		document.querySelector('label[for="presetName"]').textContent = languages[lang].presetName;
+		document.querySelector('label[for="presetDescription"]').textContent = languages[lang].presetDescription;
+		document.getElementById('presetName').placeholder = languages[lang].enterPresetName;
+		document.getElementById('presetDescription').placeholder = languages[lang].enterPresetDesc;
+		document.querySelector('#customPresetModal label').textContent = languages[lang].blockRules;
+		document.querySelector('.rules-section h4:first-of-type').textContent = languages[lang].keywords;
+		document.querySelector('.rules-section h4:last-of-type').textContent = languages[lang].urlsDomains;
+		document.getElementById('keywordInput').placeholder = languages[lang].enterKeyword;
+		document.getElementById('urlInput').placeholder = languages[lang].enterUrl;
+		document.querySelectorAll('.add-rule-btn').forEach(btn => {
+			btn.textContent = languages[lang].addBtn;
+		});
+		
+		// Update input placeholders and other text
+		document.getElementById('blockInput').placeholder = languages[lang].addBlockPlaceholder;
+		document.querySelector('#settingsTab h2').textContent = languages[lang].languageSettings;
+		document.querySelector('label[for="languageSelect"]').textContent = languages[lang].selectLanguage;
+		document.getElementById('saveSettings').textContent = languages[lang].saveSettings;
+
+		// Update password modals
+		document.querySelector('#setPasswordModal h3').textContent = languages[lang].setPasswordProtection;
+		document.querySelector('#unlockModal h3').textContent = languages[lang].unlock;
+		document.getElementById('newPassword').placeholder = languages[lang].enterPassword;
+		document.getElementById('confirmPassword').placeholder = languages[lang].confirmPassword;
+		document.getElementById('unlockPassword').placeholder = languages[lang].enterPassword;
+		document.getElementById('savePassword').textContent = languages[lang].lockPreset;
+		document.getElementById('submitUnlock').textContent = languages[lang].unlock;
+		document.getElementById('cancelSetPassword').textContent = languages[lang].cancelBtn;
+		document.getElementById('cancelUnlock').textContent = languages[lang].cancelBtn;
+
+		// Update alert messages (store for use in event handlers)
+		window.alertMessages = {
+			incorrectPassword: languages[lang].incorrectPassword,
+			passwordMinLength: languages[lang].passwordMinLength,
+			passwordsNotMatch: languages[lang].passwordsNotMatch
+		};
+
+		// Update success message text
+		document.querySelectorAll('.success-message').forEach(msg => {
+			if (msg.textContent.includes('Settings saved')) {
+				msg.textContent = languages[lang].settingsSaved;
+			}
+		});
+
+		// Update statistics section
+		document.querySelector('.stats-header h2').textContent = languages[lang].statsHeader;
+		document.querySelector('.stat-card:first-child h3').textContent = languages[lang].totalBlocksTitle;
+		document.querySelector('.stat-card:nth-child(2) h3').textContent = languages[lang].mostBlockedCategory;
+		document.querySelector('#categoryPercent').textContent = languages[lang].percentOfTotal;
+		document.querySelector('.stats-section:first-of-type h3').textContent = languages[lang].mostBlockedSites;
+		document.querySelector('.stats-section:last-child h3').textContent = languages[lang].blockingPattern;
+
+		// Update time filter buttons
+		document.querySelector('[data-period="day"]').textContent = languages[lang].timeFilterDay;
+		document.querySelector('[data-period="week"]').textContent = languages[lang].timeFilterWeek;
+		document.querySelector('[data-period="month"]').textContent = languages[lang].timeFilterMonth;
+
+		// Update trend text
+		document.querySelector('.stat-trend').textContent = languages[lang].trendFromLast;
+
+		// Update no data text
+		const noDataEl = document.querySelector('.no-data');
+		if (noDataEl) {
+			noDataEl.textContent = languages[lang].noDataAvailable;
+		}
+
+		// Update total blocked in block tab
+		document.querySelector('.stat-label').textContent = languages[lang].totalBlocked;
+	}
+	
+	// Load saved language
+	chrome.storage.sync.get(['language'], (result) => {
+		const savedLanguage = result.language || 'en';
+		currentLanguage = savedLanguage;
+		document.getElementById('languageSelect').value = savedLanguage;
+		updateLanguage(savedLanguage);
+	});
+	
+	// Language select handler
+	document.getElementById('languageSelect').addEventListener('change', (e) => {
+		const newLanguage = e.target.value;
+		updateLanguage(newLanguage);
+	});
+	
+	// Save settings handler
+	document.getElementById('saveSettings').addEventListener('click', () => {
+		const saveButton = document.getElementById('saveSettings');
+		const language = document.getElementById('languageSelect').value;
+		
+		// Store original button text
+		const originalText = saveButton.textContent;
+		
+		// Create success message element if it doesn't exist
+		let successMsg = document.querySelector('.settings-success-message');
+		if (!successMsg) {
+			successMsg = document.createElement('div');
+			successMsg.className = 'settings-success-message';
+			document.querySelector('.settings-actions').appendChild(successMsg);
+		}
+		
+		chrome.storage.sync.set({ language }, () => {
+			// Add success class to button and change text
+			saveButton.classList.add('settings-btn-success');
+			saveButton.textContent = languages[language].settingsSaved;
+			
+			// Show success message
+			successMsg.textContent = languages[language].settingsSaved;
+			successMsg.classList.add('show');
+			
+			// Reset after 5 seconds
+			setTimeout(() => {
+				saveButton.classList.remove('settings-btn-success');
+				saveButton.textContent = originalText;
+				successMsg.classList.remove('show');
+			}, 5000);
+		});
+	});
+
 	// Stats elements
 	const statsButton = document.getElementById('statsButton');
 	const statsTab = document.getElementById('statsTab');
@@ -357,12 +546,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		const confirm = confirmPassword.value;
 
 		if (password.length < 4) {
-			alert('Password must be at least 4 characters long');
+			alert(window.alertMessages.passwordMinLength);
 			return;
 		}
 
 		if (password !== confirm) {
-			alert('Passwords do not match');
+			alert(window.alertMessages.passwordsNotMatch);
 			return;
 		}
 
@@ -407,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					unlockPassword.value = '';
 				});
 			} else {
-				alert('Incorrect password');
+				alert(window.alertMessages.incorrectPassword);
 			}
 		});
 	});

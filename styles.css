@@ -563,6 +563,70 @@ input:checked + .slider:before {
     padding: 2rem;
 }
 
+/* Settings Tab Styles */
+.settings-container {
+	padding: 1rem;
+}
+
+.settings-section {
+	background: var(--bg-secondary);
+	border-radius: 0.5rem;
+	padding: 1.5rem;
+	margin-bottom: 1rem;
+}
+
+.setting-item {
+	margin: 1rem 0;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.settings-select {
+	padding: 0.5rem;
+	border-radius: 0.25rem;
+	border: 1px solid var(--border-color);
+	background: var(--bg-primary);
+	color: var(--text-primary);
+	min-width: 150px;
+}
+
+.settings-actions {
+	margin-top: 2rem;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.settings-btn-success {
+    background-color: var(--success-color) !important;
+    transition: background-color 0.3s ease;
+}
+
+.settings-success-message {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--success-color);
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.settings-success-message.show {
+    opacity: 1;
+}
+
+/* RTL Support for Arabic */
+[dir="rtl"] {
+	text-align: right;
+}
+
+[dir="rtl"] .header-controls,
+[dir="rtl"] .settings-actions {
+	flex-direction: row-reverse;
+}
+
 /* Modal styles */
 .modal {
 	display: none;

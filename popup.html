@@ -32,6 +32,7 @@
 			<button class="tab-btn active" data-tab="block">Block</button>
 			<button class="tab-btn" data-tab="manage">Manage</button>
 			<button class="tab-btn" data-tab="presets">Presets</button>
+			<button class="tab-btn" data-tab="settings">Settings</button>
 		</div>
 
 
@@ -218,6 +219,24 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="tab-content hidden" id="settingsTab">
+			<div class="settings-container">
+				<div class="settings-section">
+					<h2>Language Settings</h2>
+					<div class="setting-item">
+						<label for="languageSelect">Select Language:</label>
+						<select id="languageSelect" class="settings-select">
+							<option value="en">English</option>
+							<option value="ar">العربية</option>
+						</select>
+					</div>
+				</div>
+				<div class="settings-actions">
+					<button id="saveSettings" class="primary-btn">Save Settings</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!-- Password Modals -->
@@ -290,6 +309,7 @@
 		</div>
 	</div>
 
+	<script src="languages.js"></script>
 	<script src="popup.js"></script>
 </body>
 </html>
