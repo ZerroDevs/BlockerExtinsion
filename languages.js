@@ -71,6 +71,7 @@ const languages = {
 		createPresetBtn: "Create Preset",
 		cancelBtn: "Cancel",
 		urlValidationMsg: "Please enter a valid URL or domain (e.g., example.com, https://example.com)",
+		atLeastOneRequired: "Please add at least one keyword or URL",
 
 		// Lock functionality
 		lock: "Lock",
@@ -169,6 +170,7 @@ const languages = {
 		createPresetBtn: "إنشاء القالب",
 		cancelBtn: "إلغاء",
 		urlValidationMsg: "الرجاء إدخال رابط أو نطاق صالح (مثال: example.com، https://example.com)",
+		atLeastOneRequired: "الرجاء إضافة كلمة مفتاحية واحدة أو رابط واحد على الأقل",
 
 		// Lock functionality
 		lock: "قفل",

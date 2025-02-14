@@ -872,8 +872,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		const name = document.getElementById('presetName').value;
 		const description = document.getElementById('presetDescription').value;
 
+		// Check if at least one keyword or URL is provided
 		if (customKeywords.length === 0 && customUrls.length === 0) {
-			alert('Please add at least one keyword or URL to the preset');
+			alert(languages[currentLanguage].atLeastOneRequired);
 			return;
 		}
 
@@ -1049,6 +1050,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		const originalSubmit = customPresetForm.onsubmit;
 		customPresetForm.onsubmit = (e) => {
 			e.preventDefault();
+			
+			// Check if at least one keyword or URL is provided
+			if (customKeywords.length === 0 && customUrls.length === 0) {
+				alert(languages[currentLanguage].atLeastOneRequired);
+				return;
+			}
+
 			const updatedPreset = {
 				...preset,
 				name: document.getElementById('presetName').value,
