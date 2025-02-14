@@ -66,6 +66,7 @@ function isBlocked(url, blockedList, isHeavyMode = false) {
 	const urlObj = new URL(url);
 	const hostname = urlObj.hostname.toLowerCase();
 	const urlLower = url.toLowerCase();
+	const urlPath = urlObj.pathname.toLowerCase();
 	
 	// Check if this is a search engine URL
 	const isSearchEngine = hostname.includes('google.') || 
@@ -77,37 +78,33 @@ function isBlocked(url, blockedList, isHeavyMode = false) {
 	for (const pattern of blockedList) {
 		const patternLower = pattern.toLowerCase();
 		
-		// Check for domain matches first
-		if (pattern.includes('.com')) {
-			if (urlLower.includes(patternLower)) {
-				return true;
-			}
-			continue;
+		// Always check full URL first for any pattern
+		if (urlLower.includes(patternLower)) {
+			return true;
 		}
 		
-		// Check for keyword matches
-		if (!isHeavyMode) {
-			// Check if URL contains the pattern
-			if (urlLower.includes(patternLower)) {
-				return true;
-			}
+		// Additional checks for Light mode
+		if (!isHeavyMode && isSearchEngine) {
+			// Get search query
+			const searchQuery = urlObj.searchParams.get('q') || 
+							  urlObj.searchParams.get('p') || 
+							  urlObj.searchParams.get('text') || '';
 			
-			// Check search queries
-			if (isSearchEngine) {
-				const searchQuery = urlObj.searchParams.toString().toLowerCase();
-				if (searchQuery.includes(patternLower)) {
+			if (searchQuery) {
+				const decodedQuery = decodeURIComponent(searchQuery)
+					.toLowerCase()
+					.replace(/\+/g, ' ');
+				
+				// Check for exact word matches in search query
+				if (decodedQuery.split(/[\s,]+/).includes(patternLower)) {
 					return true;
 				}
-			}
-		} else {
-			// Heavy mode: Check everything
-			if (urlLower.includes(patternLower)) {
-				return true;
 			}
 		}
 	}
 	return false;
 }
+
 
 
 
@@ -169,37 +166,21 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		chrome.storage.sync.get(['blockedList', 'blockingMode'], (result) => {
 			const blockedList = result.blockedList || [];
 			const isHeavyMode = result.blockingMode === 'heavy';
-			// Only check URL in Light mode
-			if (!isHeavyMode) {
-				if (isBlocked(changeInfo.url, blockedList, false)) {
-					chrome.tabs.remove(tabId);
-				}
-				return;
-			}
-			// In Heavy mode, check both URL and content
-			if (isBlocked(changeInfo.url, blockedList, true)) {
+			if (isBlocked(changeInfo.url, blockedList, isHeavyMode)) {
 				chrome.tabs.remove(tabId);
-			} else {
+			} else if (isHeavyMode) {
 				checkPageContent(tabId, blockedList);
 			}
 		});
 	}
 });
 
-// Update navigation event listener
+// Listen for navigation events
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 	chrome.storage.sync.get(['blockedList', 'blockingMode'], (result) => {
 		const blockedList = result.blockedList || [];
 		const isHeavyMode = result.blockingMode === 'heavy';
-		// Only check URL in Light mode
-		if (!isHeavyMode) {
-			if (isBlocked(details.url, blockedList, false)) {
-				chrome.tabs.remove(details.tabId);
-			}
-			return;
-		}
-		// In Heavy mode, proceed with URL check (content check happens in onUpdated)
-		if (isBlocked(details.url, blockedList, true)) {
+		if (isBlocked(details.url, blockedList, isHeavyMode)) {
 			chrome.tabs.remove(details.tabId);
 		}
 	});

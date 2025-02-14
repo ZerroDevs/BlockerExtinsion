@@ -125,19 +125,26 @@ document.addEventListener('DOMContentLoaded', () => {
 	const blockingMode = document.getElementById('blockingMode');
 	const modeText = document.getElementById('modeText');
 	const themeToggle = document.getElementById('themeToggle');
+	const lightModeDesc = document.querySelector('.mode-description.light-mode');
+	const heavyModeDesc = document.querySelector('.mode-description.heavy-mode');
 
 	// Load blocking mode
 	chrome.storage.sync.get(['blockingMode'], (result) => {
 		const isHeavy = result.blockingMode === 'heavy';
 		blockingMode.checked = isHeavy;
 		modeText.textContent = isHeavy ? 'Heavy' : 'Light';
+		lightModeDesc.classList.toggle('hidden', isHeavy);
+		heavyModeDesc.classList.toggle('hidden', !isHeavy);
 	});
 
 	// Handle blocking mode toggle
 	blockingMode.addEventListener('change', (e) => {
-		const mode = e.target.checked ? 'heavy' : 'light';
+		const isHeavy = e.target.checked;
+		const mode = isHeavy ? 'heavy' : 'light';
 		chrome.storage.sync.set({ blockingMode: mode });
 		modeText.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+		lightModeDesc.classList.toggle('hidden', isHeavy);
+		heavyModeDesc.classList.toggle('hidden', !isHeavy);
 	});
 
 	const blockInput = document.getElementById('blockInput');

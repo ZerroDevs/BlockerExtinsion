@@ -371,6 +371,48 @@ input:checked + .slider:before {
 	transform: translateX(26px);
 }
 
+/* Mode Info styles */
+.mode-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.mode-description {
+    transition: opacity 0.3s;
+}
+
+.mode-description h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+}
+
+.mode-description p {
+    margin: 0 0 0.75rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.mode-description ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style: none;
+}
+
+.mode-description li {
+    margin: 0.25rem 0;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.mode-description.hidden {
+    display: none;
+}
+
 /* Modal styles */
 .modal {
 	display: none;
