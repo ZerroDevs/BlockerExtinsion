@@ -598,13 +598,54 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	// Add URL
+	// Add URL validation function
+	function isValidUrlOrDomain(value) {
+		// URL pattern that checks for http/https or valid domain format
+		const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/;
+		return urlPattern.test(value);
+	}
+
+	// Add URL input handler
+	urlInput.addEventListener('input', (e) => {
+		const value = e.target.value.trim();
+		if (isValidUrlOrDomain(value)) {
+			urlInput.style.borderColor = 'var(--success-color)';
+			addUrl.disabled = false;
+		} else {
+			urlInput.style.borderColor = 'var(--danger-color)';
+			addUrl.disabled = true;
+		}
+	});
+
+	// Modify URL add button handler
 	addUrl.addEventListener('click', () => {
 		const url = urlInput.value.trim();
-		if (url && !customUrls.includes(url)) {
+		if (url && isValidUrlOrDomain(url) && !customUrls.includes(url)) {
 			customUrls.push(url);
 			renderRuleItem(url, urlsList, 'url');
 			urlInput.value = '';
+			urlInput.style.borderColor = 'var(--border-color)';
+			addUrl.disabled = true;
+		}
+	});
+
+	// Add error message display
+	urlInput.addEventListener('focus', () => {
+		if (!urlInput.nextElementSibling?.classList.contains('input-error')) {
+			const errorMsg = document.createElement('div');
+			errorMsg.className = 'input-error';
+			errorMsg.textContent = 'Please enter a valid URL or domain (e.g., example.com, https://example.com)';
+			urlInput.parentElement.appendChild(errorMsg);
+		}
+	});
+
+	urlInput.addEventListener('blur', () => {
+		const errorMsg = urlInput.parentElement.querySelector('.input-error');
+		if (errorMsg) {
+			errorMsg.remove();
+		}
+		if (!urlInput.value.trim()) {
+			urlInput.style.borderColor = 'var(--border-color)';
 		}
 	});
 
