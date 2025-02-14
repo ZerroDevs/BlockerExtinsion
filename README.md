@@ -143,7 +143,7 @@
 
 ## 📝 License
 
-MIT License
+[MIT License](https://github.com/ZerroDevs/BlockerExtinsion/blob/main/LICENSE)
 
 ---
 
