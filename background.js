@@ -42,18 +42,21 @@ function saveBlockEvent(url, pattern, category) {
 
 // Preset configurations
 const presets = {
-	adultContent: {
-		name: 'Adult Content',
-		keywords: [
-			'porn', 'xxx', 'sex', 'adult', 'nsfw', 'nude', 'naked',
-			'pornhub', 'xvideos', 'xhamster', 'redtube', 'youporn',
-			'explicit', 'erotic', 'hentai', 'boobs', 'pussy'
-		],
-		domains: [
-			'pornhub.com', 'xvideos.com', 'xhamster.com', 'redtube.com',
-			'youporn.com', 'xnxx.com', 'brazzers.com', 'onlyfans.com'
-		]
-	},
+	name: 'adult-content',
+	keywords: [
+		// English keywords
+		'porn', 'xxx', 'sex', 'adult', 'nsfw', 'nude', 'naked',
+		'pornhub', 'xvideos', 'xhamster', 'redtube', 'youporn',
+		'explicit', 'erotic', 'hentai', 'boobs', 'pussy',
+		// Arabic keywords
+		'سكس', 'بورن', 'جنس', 'اباحي', 'اباحية', 'عاري',
+		'عارية', 'نيك', 'طيز', 'زب', 'كس', 'افلام_للكبار',
+		'مثير', 'شهوة', 'شهواني', 'مؤخرة', 'صدر', 'نكاح',
+		'دعارة', 'جماع', 'مواقع_اباحية', 'افلام_سكس',
+		'صور_سكس', 'افلام_اباحية', 'مقاطع_سكس', 'سحاق',
+		'خلاعة', 'فاحشة', 'عهر', 'فيديو_سكس', 'سكسي',
+		'عربده','عربدة'
+	],
 	socialMedia: {
 		name: 'Social Media',
 		keywords: [
