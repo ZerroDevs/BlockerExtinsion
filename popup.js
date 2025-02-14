@@ -122,12 +122,71 @@ function hideModal(modalId) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Stats elements
+	const statsButton = document.getElementById('statsButton');
+	const statsTab = document.getElementById('statsTab');
 	const timeButtons = document.querySelectorAll('.time-btn');
 	const totalBlocksCount = document.getElementById('totalBlocksCount');
 	const topCategory = document.getElementById('topCategory');
 	const categoryPercent = document.getElementById('categoryPercent');
 	const topBlockedSites = document.getElementById('topBlockedSites');
 	const blockingPattern = document.getElementById('blockingPattern');
+
+	// Track active tab
+	let previousTab = 'blockTab';
+	let isStatsOpen = false;
+
+	// Add stats button handler
+	statsButton.addEventListener('click', () => {
+		isStatsOpen = !isStatsOpen;
+		
+		if (isStatsOpen) {
+			// Store current active tab before switching to stats
+			const activeTab = document.querySelector('.tab-btn.active');
+			if (activeTab) {
+				previousTab = activeTab.dataset.tab + 'Tab';
+			}
+
+			// Hide all tabs
+			document.querySelectorAll('.tab-content').forEach(tab => {
+				tab.classList.add('hidden');
+			});
+			// Remove active class from all tab buttons
+			document.querySelectorAll('.tab-btn').forEach(btn => {
+				btn.classList.remove('active');
+			});
+			// Show stats tab
+			statsTab.classList.remove('hidden');
+			// Toggle stats icon
+			document.querySelector('.stats-default').classList.add('hidden');
+			document.querySelector('.stats-active').classList.remove('hidden');
+			statsButton.classList.add('active');
+			// Load stats
+			loadStats('day');
+		} else {
+			// Hide stats tab
+			statsTab.classList.add('hidden');
+			// Show previous tab
+			document.getElementById(previousTab).classList.remove('hidden');
+			// Update tab button state
+			const previousTabBtn = document.querySelector(`[data-tab="${previousTab.replace('Tab', '')}"]`);
+			if (previousTabBtn) {
+				previousTabBtn.classList.add('active');
+			}
+			// Reset stats icon
+			document.querySelector('.stats-default').classList.remove('hidden');
+			document.querySelector('.stats-active').classList.add('hidden');
+			statsButton.classList.remove('active');
+		}
+	});
+
+	// Handle time period buttons
+	timeButtons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			timeButtons.forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			loadStats(btn.dataset.period);
+		});
+	});
 
 	// Load and display stats
 	function loadStats(period = 'day') {
@@ -230,9 +289,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Tab switching
 	tabButtons.forEach(button => {
 		button.addEventListener('click', () => {
+			if (isStatsOpen) {
+				isStatsOpen = false;
+				statsButton.classList.remove('active');
+				document.querySelector('.stats-default').classList.remove('hidden');
+				document.querySelector('.stats-active').classList.add('hidden');
+			}
+
 			const tabName = button.dataset.tab;
 			tabButtons.forEach(btn => btn.classList.remove('active'));
 			button.classList.add('active');
+			
+			// Hide stats tab
+			statsTab.classList.add('hidden');
 			
 			tabContents.forEach(content => {
 				content.classList.add('hidden');
@@ -246,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 	});
+
 
 	// Theme handling
 	chrome.storage.sync.get(['theme'], (result) => {

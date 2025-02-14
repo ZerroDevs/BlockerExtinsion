@@ -10,23 +10,30 @@
 	<div class="container">
 		<header>
 			<h1>Site Blocker</h1>
-			<button id="themeToggle" class="theme-toggle">
-				<svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
-					<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-				</svg>
-				<svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
-					<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
-					<path d="M12 2v2m0 16v2M4 12H2m20 0h-2m-2.5-7.5l-1.5 1.5M5.5 5.5 4 4m14.5 14.5 1.5 1.5M5.5 18.5 4 20" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
-				</svg>
-			</button>
+			<div class="header-controls">
+				<button id="statsButton" class="icon-btn" title="View Statistics">
+					<svg class="stats-icon" viewBox="0 0 24 24" width="24" height="24">
+						<!-- Stats icon - default view -->
+						<path class="stats-default" d="M3 3v18h18m-9-9v9m-5-5v5m10-7v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+						<!-- Stats icon - active view -->
+						<path class="stats-active hidden" d="M3 3v18h18M7 8l3-3 4 4 5-5m-2 0h2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+					</svg>
+				</button>
+				<button id="themeToggle" class="theme-toggle">
+					<svg viewBox="0 0 24 24" width="24" height="24">
+						<path class="sun-icon" d="M12 3v2m0 14v2M5.3 5.3l1.4 1.4m10.6 10.6l1.4 1.4M3 12h2m14 0h2M5.3 18.7l1.4-1.4m10.6-10.6l1.4-1.4M12 7a5 5 0 100 10 5 5 0 000-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						<path class="moon-icon hidden" d="M12 3a6 6 0 009 9 9 9 0 11-9-9z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+				</button>
+			</div>
 		</header>
 
 		<div class="tabs">
 			<button class="tab-btn active" data-tab="block">Block</button>
 			<button class="tab-btn" data-tab="manage">Manage</button>
 			<button class="tab-btn" data-tab="presets">Presets</button>
-			<button class="tab-btn" data-tab="stats">📊 Stats</button>
 		</div>
+
 
 		<div class="tab-content" id="blockTab">
 			<div class="mode-toggle">

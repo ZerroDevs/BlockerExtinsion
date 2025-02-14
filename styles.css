@@ -850,3 +850,34 @@ input:checked + .slider:before {
 	font-size: 0.8rem;
 	color: var(--accent-color);
 }
+
+.icon-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+	color: var(--text-primary);
+	transition: transform 0.2s;
+}
+
+.icon-btn:hover {
+	transform: scale(1.1);
+}
+
+.stats-icon {
+	transition: transform 0.3s ease;
+}
+
+.stats-icon .stats-default,
+.stats-icon .stats-active {
+	transition: opacity 0.3s ease;
+}
+
+.stats-icon .hidden {
+	opacity: 0;
+	position: absolute;
+}
+
+#statsButton.active .stats-icon {
+	transform: scale(1.1);
+}
