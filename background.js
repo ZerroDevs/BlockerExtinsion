@@ -61,161 +61,146 @@ function getCategoryFromItem(item) {
 	return 'Custom Block Rule';
 }
 
-// Function to show block notification
-function showBlockNotification(reason, type) {
-	const category = type === 'domain' ? 'Website' : 'Content';
-	const categoryName = getCategoryFromItem(reason);
-	const title = `🚫 ${category} Blocked`;
-	let message = '';
-
-	if (type === 'domain') {
-		message = `⛔ Access blocked: "${reason}"\n📁 Category: ${categoryName}`;
-	} else if (type === 'keyword') {
-		message = `⚠️ Blocked ${categoryName.toLowerCase()} content detected`;
-	}
-
-	// Create simple notification without icon
-	const notificationId = `block-${Date.now()}`;
-	chrome.notifications.create(notificationId, {
-		type: 'basic',
-		title: title,
-		message: message,
-		priority: 2,
-		requireInteraction: false,
-		iconUrl: chrome.runtime.getURL('icon.svg')
-	}, (notificationId) => {
-		if (chrome.runtime.lastError) {
-			// If notification fails, log to console
-			console.error('Notification failed:', chrome.runtime.lastError);
-			// Try without icon as fallback
-			chrome.notifications.create(notificationId, {
-				type: 'basic',
-				title: title,
-				message: message,
-				priority: 2,
-				requireInteraction: false
-			});
+// Helper function to check if a URL matches any blocked pattern
+function isBlocked(url, blockedList, isHeavyMode = false) {
+	const urlObj = new URL(url);
+	const hostname = urlObj.hostname.toLowerCase();
+	const urlLower = url.toLowerCase();
+	
+	// Check if this is a search engine URL
+	const isSearchEngine = hostname.includes('google.') || 
+						 hostname.includes('bing.') || 
+						 hostname.includes('yahoo.') || 
+						 hostname.includes('duckduckgo.') || 
+						 hostname.includes('yandex.');
+	
+	for (const pattern of blockedList) {
+		const patternLower = pattern.toLowerCase();
+		
+		// Check for domain matches first
+		if (pattern.includes('.com')) {
+			if (urlLower.includes(patternLower)) {
+				return true;
+			}
+			continue;
 		}
 		
-		// Auto-clear notification after 3 seconds
-		setTimeout(() => {
-			chrome.notifications.clear(notificationId);
-		}, 3000);
-	});
-}
-
-// Add notification click handler
-chrome.notifications.onClicked.addListener((notificationId) => {
-	if (notificationId.startsWith('block-')) {
-		chrome.notifications.clear(notificationId);
+		// Check for keyword matches
+		if (!isHeavyMode) {
+			// Check if URL contains the pattern
+			if (urlLower.includes(patternLower)) {
+				return true;
+			}
+			
+			// Check search queries
+			if (isSearchEngine) {
+				const searchQuery = urlObj.searchParams.toString().toLowerCase();
+				if (searchQuery.includes(patternLower)) {
+					return true;
+				}
+			}
+		} else {
+			// Heavy mode: Check everything
+			if (urlLower.includes(patternLower)) {
+				return true;
+			}
+		}
 	}
-});
-
-
-
-
-
-// Helper function to check if a URL matches any blocked pattern
-function isBlocked(url, blockedList) {
-	const urlLower = url.toLowerCase();
-	const hostname = new URL(url).hostname.toLowerCase();
-	
-	// Check for exact domain matches first
-	const matchedDomain = blockedList.find(pattern => 
-		pattern.includes('.com') && hostname.includes(pattern)
-	);
-	if (matchedDomain) {
-		showBlockNotification(matchedDomain, 'domain');
-		return true;
-	}
-
-	// Check for keyword matches
-	const matchedKeyword = blockedList.find(pattern => {
-		const patternLower = pattern.toLowerCase();
-		return urlLower.includes(patternLower) || hostname.includes(patternLower);
-	});
-	if (matchedKeyword) {
-		showBlockNotification(matchedKeyword, 'keyword');
-		return true;
-	}
-
 	return false;
 }
 
-// Helper function to check page content with improved detection
+
+
+
+
+
+
+
+
+
+// Helper function to check page content (only in Heavy mode)
 function checkPageContent(tabId, blockedList) {
-	chrome.scripting.executeScript({
-		target: { tabId },
-		function: (keywords) => {
-			const pageText = document.body.innerText.toLowerCase();
-			const metaTags = document.getElementsByTagName('meta');
-			const metaContent = Array.from(metaTags)
-				.map(meta => (meta.content || '').toLowerCase())
-				.join(' ');
-			
-			const links = Array.from(document.getElementsByTagName('a'))
-				.map(a => (a.href || '').toLowerCase());
-			
-			const socialMediaClasses = ['facebook', 'twitter', 'instagram', 'social', 'share'];
-			const hasSocialMediaElements = socialMediaClasses.some(className => 
-				document.getElementsByClassName(className).length > 0
-			);
-
-			const gameRelatedElements = document.querySelectorAll(
-				'[class*="game"],[class*="play"],[id*="game"],[id*="play"]'
-			).length > 0;
-
-			const contentToCheck = [
-				pageText,
-				metaContent,
-				...links,
-				hasSocialMediaElements ? 'social-media-elements-present' : '',
-				gameRelatedElements ? 'game-elements-present' : ''
-			].join(' ');
-
-			// Return both the result and the matched keyword
-			const matchedKeyword = keywords.find(keyword => 
-				contentToCheck.includes(keyword.toLowerCase())
-			);
-			return { blocked: !!matchedKeyword, keyword: matchedKeyword };
-		},
-		args: [blockedList]
-	}).then(results => {
-		if (results[0]?.result.blocked) {
-			showBlockNotification(results[0].result.keyword, 'keyword');
-			chrome.tabs.remove(tabId);
+	chrome.storage.sync.get(['blockingMode'], (result) => {
+		// Only check page content in Heavy mode
+		if (result.blockingMode !== 'heavy') {
+			return;
 		}
-	}).catch(() => {
-		// Handle any errors silently
+
+		chrome.scripting.executeScript({
+			target: { tabId },
+			function: (keywords) => {
+				const pageText = document.body.innerText.toLowerCase();
+				const metaTags = document.getElementsByTagName('meta');
+				const metaContent = Array.from(metaTags)
+					.map(meta => (meta.content || '').toLowerCase())
+					.join(' ');
+				
+				const links = Array.from(document.getElementsByTagName('a'))
+					.map(a => (a.href || '').toLowerCase());
+				
+				const contentToCheck = [
+					pageText,
+					metaContent,
+					...links
+				].join(' ');
+
+				const matchedKeyword = keywords.find(keyword => 
+					contentToCheck.includes(keyword.toLowerCase())
+				);
+				return { blocked: !!matchedKeyword, keyword: matchedKeyword };
+			},
+			args: [blockedList]
+		}).then(results => {
+			if (results[0]?.result.blocked) {
+				chrome.tabs.remove(tabId);
+			}
+		}).catch(() => {
+			// Handle any errors silently
+		});
 	});
 }
+
+
+
 
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.url) {
-		chrome.storage.sync.get(['blockedList'], (result) => {
+		chrome.storage.sync.get(['blockedList', 'blockingMode'], (result) => {
 			const blockedList = result.blockedList || [];
-			if (isBlocked(changeInfo.url, blockedList)) {
+			const isHeavyMode = result.blockingMode === 'heavy';
+			// Only check URL in Light mode
+			if (!isHeavyMode) {
+				if (isBlocked(changeInfo.url, blockedList, false)) {
+					chrome.tabs.remove(tabId);
+				}
+				return;
+			}
+			// In Heavy mode, check both URL and content
+			if (isBlocked(changeInfo.url, blockedList, true)) {
 				chrome.tabs.remove(tabId);
+			} else {
+				checkPageContent(tabId, blockedList);
 			}
 		});
 	}
 });
 
-// Listen for navigation events
+// Update navigation event listener
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-	chrome.storage.sync.get(['blockedList'], (result) => {
+	chrome.storage.sync.get(['blockedList', 'blockingMode'], (result) => {
 		const blockedList = result.blockedList || [];
-		if (isBlocked(details.url, blockedList)) {
+		const isHeavyMode = result.blockingMode === 'heavy';
+		// Only check URL in Light mode
+		if (!isHeavyMode) {
+			if (isBlocked(details.url, blockedList, false)) {
+				chrome.tabs.remove(details.tabId);
+			}
+			return;
+		}
+		// In Heavy mode, proceed with URL check (content check happens in onUpdated)
+		if (isBlocked(details.url, blockedList, true)) {
 			chrome.tabs.remove(details.tabId);
 		}
-	});
-});
-
-// Listen for completed navigation to check page content
-chrome.webNavigation.onCompleted.addListener((details) => {
-	chrome.storage.sync.get(['blockedList'], (result) => {
-		const blockedList = result.blockedList || [];
-		checkPageContent(details.tabId, blockedList);
 	});
 });

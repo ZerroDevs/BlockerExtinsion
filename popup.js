@@ -122,7 +122,24 @@ function hideModal(modalId) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Get DOM elements
+	const blockingMode = document.getElementById('blockingMode');
+	const modeText = document.getElementById('modeText');
 	const themeToggle = document.getElementById('themeToggle');
+
+	// Load blocking mode
+	chrome.storage.sync.get(['blockingMode'], (result) => {
+		const isHeavy = result.blockingMode === 'heavy';
+		blockingMode.checked = isHeavy;
+		modeText.textContent = isHeavy ? 'Heavy' : 'Light';
+	});
+
+	// Handle blocking mode toggle
+	blockingMode.addEventListener('change', (e) => {
+		const mode = e.target.checked ? 'heavy' : 'light';
+		chrome.storage.sync.set({ blockingMode: mode });
+		modeText.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+	});
+
 	const blockInput = document.getElementById('blockInput');
 	const addBlock = document.getElementById('addBlock');
 	const blockedItems = document.getElementById('blockedItems');
