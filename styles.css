@@ -29,7 +29,7 @@ body {
 	font-family: 'Segoe UI', system-ui, sans-serif;
 	background-color: var(--bg-primary);
 	color: var(--text-primary);
-	width: 350px;
+	width: 500px;
 	min-height: 400px;
 	transition: background-color 0.3s, color 0.3s;
 }
@@ -573,17 +573,74 @@ input:checked + .slider:before {
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 1000;
+	overflow-y: auto;
+	padding: 20px;
 }
 
 .modal-content {
 	position: relative;
 	background-color: var(--bg-primary);
-	margin: 15% auto;
+	margin: 15px auto;
 	padding: 1.5rem;
 	border-radius: 0.5rem;
-	width: 80%;
-	max-width: 400px;
+	width: 95%;
+	max-width: 450px;
 	box-shadow: 0 4px 6px var(--shadow-color);
+	max-height: 85vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Custom Preset Modal specific styles */
+#customPresetModal .modal-content {
+    max-width: 480px;
+    width: 98%;
+}
+
+#customPresetModal .form-group {
+    margin-bottom: 1rem;
+}
+
+#customPresetModal .rules-container {
+    max-height: 350px;
+    padding: 1.25rem;
+}
+
+#customPresetModal .rules-section {
+    background: var(--bg-primary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+#customPresetModal .rule-input-group {
+    margin-bottom: 0.75rem;
+}
+
+#customPresetModal .rules-list {
+    min-height: 60px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+}
+
+#customPresetModal .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+#customPresetModal .modal-buttons button {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+}
+
+#customPresetModal textarea {
+    min-height: 80px;
+    resize: vertical;
 }
 
 .password-form {
@@ -602,10 +659,12 @@ input:checked + .slider:before {
 }
 
 .modal-buttons {
-	display: flex;
-	gap: 0.5rem;
-	justify-content: flex-end;
-	margin-top: 1rem;
+	margin-top: 1.5rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--border-color);
+	background: var(--bg-primary);
+	position: sticky;
+	bottom: 0;
 }
 
 .primary-btn, .secondary-btn {
@@ -880,4 +939,305 @@ input:checked + .slider:before {
 
 #statsButton.active .stats-icon {
 	transform: scale(1.1);
+}
+
+/* Custom Preset Styles */
+.preset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.create-preset-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+}
+
+.create-preset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.create-preset-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.preset-section-title {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.custom-preset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(85vh - 120px); /* Account for header and buttons */
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+.custom-preset-form::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-preset-form::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+.custom-preset-form::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+.custom-preset-form::-webkit-scrollbar-thumb:hover {
+    background: #357abd;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+.rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.rules-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rules-container::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+.rules-container::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+.rules-container::-webkit-scrollbar-thumb:hover {
+    background: #357abd;
+}
+
+.rules-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.rules-section h4 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.rule-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.rule-input-group input {
+    flex: 1;
+}
+
+.add-rule-btn {
+    padding: 0.75rem 1rem;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+}
+
+.add-rule-btn:hover {
+    background: var(--gradient-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.rules-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 2rem;
+    padding: 0.5rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 0.75rem;
+}
+
+.rule-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-primary);
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    animation: slideIn 0.3s ease;
+}
+
+.rule-item .remove-rule {
+    color: var(--danger-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    transition: all var(--transition-speed) ease;
+}
+
+.rule-item .remove-rule:hover {
+    transform: scale(1.1) rotate(90deg);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Custom preset item styles */
+.custom-preset-item {
+    position: relative;
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-preset-item:hover {
+    transform: translateY(-3px);
+}
+
+.custom-preset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.custom-preset-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.custom-preset-info p {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.custom-preset-controls {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.edit-preset-btn,
+.delete-preset-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.edit-preset-btn {
+    color: var(--accent-color);
+}
+
+.delete-preset-btn {
+    color: var(--danger-color);
+}
+
+.edit-preset-btn:hover,
+.delete-preset-btn:hover {
+    background: var(--bg-primary);
+    transform: scale(1.1);
+}
+
+.custom-preset-rules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.rule-tag {
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-primary);
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.rule-tag.keyword {
+    background: rgba(74, 144, 226, 0.1);
+    color: var(--accent-color);
+}
+
+.rule-tag.url {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
 }

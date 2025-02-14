@@ -559,6 +559,273 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('gamblingPreset').addEventListener('change', (e) => {
 		handlePresetToggle('gambling', e.target.checked);
 	});
+
+	// Custom Preset Management
+	const createPresetBtn = document.getElementById('createPresetBtn');
+	const customPresetModal = document.getElementById('customPresetModal');
+	const customPresetForm = document.getElementById('customPresetForm');
+	const cancelCustomPreset = document.getElementById('cancelCustomPreset');
+	const keywordInput = document.getElementById('keywordInput');
+	const urlInput = document.getElementById('urlInput');
+	const addKeyword = document.getElementById('addKeyword');
+	const addUrl = document.getElementById('addUrl');
+	const keywordsList = document.getElementById('keywordsList');
+	const urlsList = document.getElementById('urlsList');
+	const customPresetsContainer = document.querySelector('.custom-presets-container');
+
+	let customKeywords = [];
+	let customUrls = [];
+
+	// Show custom preset modal
+	createPresetBtn.addEventListener('click', () => {
+		customPresetModal.classList.add('show');
+		resetCustomPresetForm();
+	});
+
+	// Hide custom preset modal
+	cancelCustomPreset.addEventListener('click', () => {
+		customPresetModal.classList.remove('show');
+		resetCustomPresetForm();
+	});
+
+	// Add keyword
+	addKeyword.addEventListener('click', () => {
+		const keyword = keywordInput.value.trim();
+		if (keyword && !customKeywords.includes(keyword)) {
+			customKeywords.push(keyword);
+			renderRuleItem(keyword, keywordsList, 'keyword');
+			keywordInput.value = '';
+		}
+	});
+
+	// Add URL
+	addUrl.addEventListener('click', () => {
+		const url = urlInput.value.trim();
+		if (url && !customUrls.includes(url)) {
+			customUrls.push(url);
+			renderRuleItem(url, urlsList, 'url');
+			urlInput.value = '';
+		}
+	});
+
+	// Handle form submission
+	customPresetForm.addEventListener('submit', (e) => {
+		e.preventDefault();
+		const name = document.getElementById('presetName').value;
+		const description = document.getElementById('presetDescription').value;
+
+		if (customKeywords.length === 0 && customUrls.length === 0) {
+			alert('Please add at least one keyword or URL to the preset');
+			return;
+		}
+
+		const newPreset = {
+			id: Date.now().toString(),
+			name,
+			description,
+			keywords: customKeywords,
+			domains: customUrls,
+			isCustom: true
+		};
+
+		saveCustomPreset(newPreset);
+		customPresetModal.classList.remove('show');
+		resetCustomPresetForm();
+	});
+
+	// Render rule item
+	function renderRuleItem(value, container, type) {
+		const item = document.createElement('div');
+		item.className = 'rule-item';
+		item.innerHTML = `
+			<span>${value}</span>
+			<button class="remove-rule" data-value="${value}" data-type="${type}">
+				<svg viewBox="0 0 24 24" width="16" height="16">
+					<path d="M6 6l12 12m-12 0l12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+				</svg>
+			</button>
+		`;
+
+		container.appendChild(item);
+
+		// Add remove handler
+		item.querySelector('.remove-rule').addEventListener('click', (e) => {
+			const value = e.currentTarget.dataset.value;
+			const type = e.currentTarget.dataset.type;
+			if (type === 'keyword') {
+				customKeywords = customKeywords.filter(k => k !== value);
+			} else {
+				customUrls = customUrls.filter(u => u !== value);
+			}
+			item.remove();
+		});
+	}
+
+	// Save custom preset
+	function saveCustomPreset(preset) {
+		chrome.storage.sync.get(['customPresets'], (result) => {
+			const customPresets = result.customPresets || [];
+			customPresets.push(preset);
+			chrome.storage.sync.set({ customPresets }, () => {
+				renderCustomPresets();
+			});
+		});
+	}
+
+	// Render custom presets
+	function renderCustomPresets() {
+		chrome.storage.sync.get(['customPresets', 'blockedList'], (result) => {
+			const customPresets = result.customPresets || [];
+			const blockedList = result.blockedList || [];
+			customPresetsContainer.innerHTML = '';
+
+			customPresets.forEach(preset => {
+				const isActive = preset.keywords.every(k => blockedList.includes(k)) &&
+							   preset.domains.every(d => blockedList.includes(d));
+
+				const presetElement = document.createElement('div');
+				presetElement.className = 'custom-preset-item';
+				presetElement.innerHTML = `
+					<div class="custom-preset-header">
+						<div class="custom-preset-info">
+							<h3>${preset.name}</h3>
+							<p>${preset.description}</p>
+						</div>
+						<div class="custom-preset-controls">
+							<button class="edit-preset-btn" data-id="${preset.id}">
+								<svg viewBox="0 0 24 24" width="20" height="20">
+									<path d="M15 6l3 3L9 18H6v-3l9-9z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+								</svg>
+							</button>
+							<button class="delete-preset-btn" data-id="${preset.id}">
+								<svg viewBox="0 0 24 24" width="20" height="20">
+									<path d="M6 6l12 12m-12 0l12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+								</svg>
+							</button>
+							<label class="switch">
+								<input type="checkbox" ${isActive ? 'checked' : ''} data-preset-id="${preset.id}">
+								<span class="slider"></span>
+							</label>
+						</div>
+					</div>
+					<div class="custom-preset-rules">
+						${preset.keywords.map(k => `<span class="rule-tag keyword">${k}</span>`).join('')}
+						${preset.domains.map(d => `<span class="rule-tag url">${d}</span>`).join('')}
+					</div>
+				`;
+
+				// Add event listeners
+				const toggle = presetElement.querySelector('input[type="checkbox"]');
+				toggle.addEventListener('change', (e) => {
+					handleCustomPresetToggle(preset, e.target.checked);
+				});
+
+				const deleteBtn = presetElement.querySelector('.delete-preset-btn');
+				deleteBtn.addEventListener('click', () => {
+					if (confirm('Are you sure you want to delete this preset?')) {
+						deleteCustomPreset(preset.id);
+					}
+				});
+
+				const editBtn = presetElement.querySelector('.edit-preset-btn');
+				editBtn.addEventListener('click', () => {
+					editCustomPreset(preset);
+				});
+
+				customPresetsContainer.appendChild(presetElement);
+			});
+		});
+	}
+
+	// Handle custom preset toggle
+	function handleCustomPresetToggle(preset, checked) {
+		chrome.storage.sync.get(['blockedList'], (result) => {
+			let blockedList = result.blockedList || [];
+			
+			if (checked) {
+				// Add all keywords and domains from preset
+				const newItems = [...preset.keywords, ...preset.domains]
+					.filter(item => !blockedList.includes(item));
+				blockedList = [...blockedList, ...newItems];
+			} else {
+				// Remove all keywords and domains from preset
+				blockedList = blockedList.filter(item => 
+					!preset.keywords.includes(item) && !preset.domains.includes(item)
+				);
+			}
+
+			chrome.storage.sync.set({ blockedList }, () => {
+				renderBlockedItems(blockedList);
+			});
+		});
+	}
+
+	// Delete custom preset
+	function deleteCustomPreset(presetId) {
+		chrome.storage.sync.get(['customPresets'], (result) => {
+			const customPresets = result.customPresets.filter(p => p.id !== presetId);
+			chrome.storage.sync.set({ customPresets }, () => {
+				renderCustomPresets();
+			});
+		});
+	}
+
+	// Edit custom preset
+	function editCustomPreset(preset) {
+		// Populate form with preset data
+		document.getElementById('presetName').value = preset.name;
+		document.getElementById('presetDescription').value = preset.description;
+		customKeywords = [...preset.keywords];
+		customUrls = [...preset.domains];
+
+		// Render existing rules
+		keywordsList.innerHTML = '';
+		urlsList.innerHTML = '';
+		customKeywords.forEach(keyword => renderRuleItem(keyword, keywordsList, 'keyword'));
+		customUrls.forEach(url => renderRuleItem(url, urlsList, 'url'));
+
+		// Show modal
+		customPresetModal.classList.add('show');
+
+		// Update form submission to handle edit
+		const originalSubmit = customPresetForm.onsubmit;
+		customPresetForm.onsubmit = (e) => {
+			e.preventDefault();
+			const updatedPreset = {
+				...preset,
+				name: document.getElementById('presetName').value,
+				description: document.getElementById('presetDescription').value,
+				keywords: customKeywords,
+				domains: customUrls
+			};
+
+			chrome.storage.sync.get(['customPresets'], (result) => {
+				const customPresets = result.customPresets.map(p => 
+					p.id === preset.id ? updatedPreset : p
+				);
+				chrome.storage.sync.set({ customPresets }, () => {
+					renderCustomPresets();
+					customPresetModal.classList.remove('show');
+					resetCustomPresetForm();
+				});
+			});
+
+			// Restore original submit handler
+			customPresetForm.onsubmit = originalSubmit;
+		};
+	}
+
+	// Reset custom preset form
+	function resetCustomPresetForm() {
+		customPresetForm.reset();
+		customKeywords = [];
+		customUrls = [];
+		keywordsList.innerHTML = '';
+		urlsList.innerHTML = '';
+	}
+
+	// Initial render of custom presets
+	renderCustomPresets();
 });
 
 // Helper function for blocking pattern
