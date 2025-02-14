@@ -1,3 +1,45 @@
+// Statistics tracking
+function saveBlockEvent(url, pattern, category) {
+	const now = new Date();
+	const timestamp = now.getTime();
+	const day = now.toISOString().split('T')[0];
+
+	chrome.storage.local.get(['blockStats'], (result) => {
+		const stats = result.blockStats || {
+			totalBlocks: 0,
+			dailyStats: {},
+			topSites: {},
+			categoryStats: {}
+		};
+
+		// Update total blocks
+		stats.totalBlocks++;
+
+		// Update daily stats
+		if (!stats.dailyStats[day]) {
+			stats.dailyStats[day] = 0;
+		}
+		stats.dailyStats[day]++;
+
+		// Update top sites
+		const hostname = new URL(url).hostname;
+		if (!stats.topSites[hostname]) {
+			stats.topSites[hostname] = 0;
+		}
+		stats.topSites[hostname]++;
+
+		// Update category stats
+		const blockCategory = category || 'Custom';
+		if (!stats.categoryStats[blockCategory]) {
+			stats.categoryStats[blockCategory] = 0;
+		}
+		stats.categoryStats[blockCategory]++;
+
+		// Store updated stats
+		chrome.storage.local.set({ blockStats: stats });
+	});
+}
+
 // Preset configurations
 const presets = {
 	adultContent: {
@@ -80,6 +122,7 @@ function isBlocked(url, blockedList, isHeavyMode = false) {
 		
 		// Always check full URL first for any pattern
 		if (urlLower.includes(patternLower)) {
+			saveBlockEvent(url, pattern, getCategoryFromItem(pattern));
 			return true;
 		}
 		
@@ -97,6 +140,7 @@ function isBlocked(url, blockedList, isHeavyMode = false) {
 				
 				// Check for exact word matches in search query
 				if (decodedQuery.split(/[\s,]+/).includes(patternLower)) {
+					saveBlockEvent(url, pattern, getCategoryFromItem(pattern));
 					return true;
 				}
 			}
@@ -149,7 +193,11 @@ function checkPageContent(tabId, blockedList) {
 			args: [blockedList]
 		}).then(results => {
 			if (results[0]?.result.blocked) {
-				chrome.tabs.remove(tabId);
+				const pattern = results[0].result.keyword;
+				chrome.tabs.get(tabId, (tab) => {
+					saveBlockEvent(tab.url, pattern, getCategoryFromItem(pattern));
+					chrome.tabs.remove(tabId);
+				});
 			}
 		}).catch(() => {
 			// Handle any errors silently

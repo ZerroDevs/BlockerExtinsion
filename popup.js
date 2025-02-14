@@ -121,6 +121,67 @@ function hideModal(modalId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	// Stats elements
+	const timeButtons = document.querySelectorAll('.time-btn');
+	const totalBlocksCount = document.getElementById('totalBlocksCount');
+	const topCategory = document.getElementById('topCategory');
+	const categoryPercent = document.getElementById('categoryPercent');
+	const topBlockedSites = document.getElementById('topBlockedSites');
+	const blockingPattern = document.getElementById('blockingPattern');
+
+	// Load and display stats
+	function loadStats(period = 'day') {
+		chrome.storage.local.get(['blockStats'], (result) => {
+			const stats = result.blockStats || {
+				totalBlocks: 0,
+				dailyStats: {},
+				topSites: {},
+				categoryStats: {}
+			};
+
+			// Update total blocks
+			totalBlocksCount.textContent = stats.totalBlocks;
+
+			// Get top category
+			const categories = Object.entries(stats.categoryStats)
+				.sort(([,a], [,b]) => b - a);
+			
+			if (categories.length > 0) {
+				const [topCat, topCount] = categories[0];
+				topCategory.textContent = topCat;
+				const percentage = ((topCount / stats.totalBlocks) * 100).toFixed(1);
+				categoryPercent.textContent = `${percentage}% of total blocks`;
+			}
+
+			// Update top sites list
+			const topSites = Object.entries(stats.topSites)
+				.sort(([,a], [,b]) => b - a)
+				.slice(0, 5);
+			
+			topBlockedSites.innerHTML = topSites.map(([site, count]) => `
+				<div class="site-item">
+					<span class="site-name">${site}</span>
+					<span class="site-count">${count}</span>
+				</div>
+			`).join('');
+
+			// Update blocking pattern based on period
+			updateBlockingPattern(stats.dailyStats, period);
+		});
+	}
+
+	// Handle time period buttons
+	timeButtons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			timeButtons.forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			loadStats(btn.dataset.period);
+		});
+	});
+
+	// Load initial stats
+	loadStats('day');
+
 	// Get DOM elements
 	const blockingMode = document.getElementById('blockingMode');
 	const modeText = document.getElementById('modeText');
@@ -429,3 +490,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		handlePresetToggle('gambling', e.target.checked);
 	});
 });
+
+// Helper function for blocking pattern
+function updateBlockingPattern(dailyStats, period) {
+	const chartContainer = document.getElementById('blockingPattern');
+	const dates = Object.keys(dailyStats).sort();
+	
+	if (dates.length === 0) {
+		chartContainer.innerHTML = '<div class="no-data">No blocking data available</div>';
+		return;
+	}
+
+	// Create simple bar chart
+	const maxValue = Math.max(...Object.values(dailyStats));
+	const bars = dates.map(date => {
+		const height = (dailyStats[date] / maxValue) * 100;
+		return `
+			<div class="chart-bar" style="height: ${height}%" title="${date}: ${dailyStats[date]} blocks">
+				<div class="bar-value">${dailyStats[date]}</div>
+			</div>
+		`;
+	}).join('');
+
+	chartContainer.innerHTML = `<div class="chart">${bars}</div>`;
+}

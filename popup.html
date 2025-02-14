@@ -25,6 +25,7 @@
 			<button class="tab-btn active" data-tab="block">Block</button>
 			<button class="tab-btn" data-tab="manage">Manage</button>
 			<button class="tab-btn" data-tab="presets">Presets</button>
+			<button class="tab-btn" data-tab="stats">📊 Stats</button>
 		</div>
 
 		<div class="tab-content" id="blockTab">
@@ -152,6 +153,46 @@
 							<input type="checkbox" id="gamblingPreset">
 							<span class="slider"></span>
 						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-content hidden" id="statsTab">
+			<div class="stats-container">
+				<div class="stats-header">
+					<h2>Blocking Statistics</h2>
+					<div class="time-filter">
+						<button class="time-btn active" data-period="day">Day</button>
+						<button class="time-btn" data-period="week">Week</button>
+						<button class="time-btn" data-period="month">Month</button>
+					</div>
+				</div>
+
+				<div class="stats-grid">
+					<div class="stat-card">
+						<h3>Total Blocks</h3>
+						<div class="stat-value" id="totalBlocksCount">0</div>
+						<div class="stat-trend up">↑ 12% from last period</div>
+					</div>
+					<div class="stat-card">
+						<h3>Most Blocked Category</h3>
+						<div class="stat-value" id="topCategory">-</div>
+						<div class="stat-subtext" id="categoryPercent">0% of total blocks</div>
+					</div>
+				</div>
+
+				<div class="stats-section">
+					<h3>Most Blocked Sites</h3>
+					<div class="top-sites" id="topBlockedSites">
+						<!-- Top sites will be inserted here -->
+					</div>
+				</div>
+
+				<div class="stats-section">
+					<h3>Blocking Pattern</h3>
+					<div class="chart-container" id="blockingPattern">
+						<!-- Chart will be inserted here -->
 					</div>
 				</div>
 			</div>

@@ -410,7 +410,157 @@ input:checked + .slider:before {
 }
 
 .mode-description.hidden {
-    display: none;
+	display: none;
+}
+
+/* Stats Tab Styles */
+.stats-container {
+	padding: 1rem;
+}
+
+.stats-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+}
+
+.time-filter {
+	display: flex;
+	gap: 0.5rem;
+	background: var(--bg-secondary);
+	padding: 0.25rem;
+	border-radius: 0.5rem;
+}
+
+.time-btn {
+	background: none;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 0.25rem;
+	cursor: pointer;
+	color: var(--text-secondary);
+}
+
+.time-btn.active {
+	background: var(--accent-color);
+	color: white;
+}
+
+.stats-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.stat-card {
+	background: var(--bg-secondary);
+	padding: 1rem;
+	border-radius: 0.5rem;
+	border: 1px solid var(--border-color);
+}
+
+.stat-card h3 {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+}
+
+.stat-value {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0.5rem 0;
+}
+
+.stat-trend {
+	font-size: 0.8rem;
+	color: var(--success-color);
+}
+
+.stat-trend.down {
+	color: var(--danger-color);
+}
+
+.stats-section {
+	background: var(--bg-secondary);
+	padding: 1rem;
+	border-radius: 0.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid var(--border-color);
+}
+
+.stats-section h3 {
+	margin: 0 0 1rem 0;
+	font-size: 1rem;
+	color: var(--text-primary);
+}
+
+.top-sites {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.site-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem;
+	background: var(--bg-primary);
+	border-radius: 0.25rem;
+}
+
+.site-name {
+	color: var(--text-primary);
+	font-size: 0.9rem;
+}
+
+.site-count {
+	color: var(--text-secondary);
+	font-size: 0.8rem;
+	background: var(--bg-secondary);
+	padding: 0.25rem 0.5rem;
+	border-radius: 1rem;
+}
+
+.chart-container {
+	height: 200px;
+	margin-top: 1rem;
+}
+
+/* Chart styles */
+.chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 1rem 0;
+}
+
+.chart-bar {
+    flex: 1;
+    background: var(--accent-color);
+    min-height: 1px;
+    position: relative;
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s;
+}
+
+.bar-value {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.no-data {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
 }
 
 /* Modal styles */
